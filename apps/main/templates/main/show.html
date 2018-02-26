@@ -1,0 +1,15 @@
+<!Doctype html>
+<html>
+<head>
+    <title>results page</title>
+</head>
+<body>
+    <h2>Welcome {{currunt_user.name}}</h2>
+ 
+  
+     <form action='/'>
+        {% csrf_token %}
+        <button>Go back</button>
+    </form>
+</body>
+</html>
