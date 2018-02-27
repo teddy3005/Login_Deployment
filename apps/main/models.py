@@ -12,6 +12,9 @@ class UserManager(models.Manager):
         if not re.search(r'\w+\@\w+\.\w+',post.get('email')):
             is_valid=False
             errors.append('Please provide a valid email address')
+        if len(User.objects.filter(email=post['email'])) > 0:
+            is_valid=False
+            errors.append('Email Already in Use!')
         if len(post.get('password')) == 0:
             is_valid=False
             errors.append('Password cannot be blank')
