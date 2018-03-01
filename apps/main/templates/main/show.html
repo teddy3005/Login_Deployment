@@ -4,12 +4,13 @@
     <title>results page</title>
 </head>
 <body>
-    <h2>Welcome {{current_user.name}}</h2>
+    <h2>Hello {{current_user.name}}</h2>
  
   
-     <form action='/'>
-        {% csrf_token %}
-        <button>Go back</button>
+     
+ <form action='/logout'>
+    {% csrf_token %}
+        <button>Log Out</button>
     </form>
 </body>
 </html>

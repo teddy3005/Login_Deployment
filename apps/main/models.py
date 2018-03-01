@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import re
+import datetime
 from django.db import models
 
 class UserManager(models.Manager):
@@ -9,6 +10,9 @@ class UserManager(models.Manager):
         if len(post.get('name'))==0:
             is_valid=False
             errors.append('Name field cannot be blank!')
+        if len(post.get('name'))<3:
+            is_valid=False
+            errors.append('name must 3 characters or more')
         if not re.search(r'\w+\@\w+\.\w+',post.get('email')):
             is_valid=False
             errors.append('Please provide a valid email address')
@@ -24,10 +28,20 @@ class UserManager(models.Manager):
         return (is_valid, errors)
        
 
+
+
+   
+   
+
+
 class User(models.Model):
     name=models.CharField(max_length=255)
     email=models.CharField(max_length=255)
     password=models.CharField(max_length=255)
+    # date_hired=models.DateField()
     created_at =models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
     objects=UserManager()
+
+
+

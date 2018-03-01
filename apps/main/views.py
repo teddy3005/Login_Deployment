@@ -23,6 +23,10 @@ def login(request):
             messages.error(request,'Email and password provided did not match')
             return redirect ('/')
 
+
+
+
+
 def createUser(request):
     if request.method != 'POST':
         return redirect('/')
@@ -46,9 +50,20 @@ def createUser(request):
             request.session['user']=user
             return redirect('/show')
     
+
+
+
+
 def view_result(request):
-    context = {
+    if 'user' in request.session:
+        context = {
         'current_user':request.session['user'],
        }
    
-    return render(request, 'main/show.html', context)
+        return render(request, 'main/show.html', context)
+    else:
+        return  redirect ('/')
+
+def logout(request):
+    request.session.clear()
+    return redirect ('/')
