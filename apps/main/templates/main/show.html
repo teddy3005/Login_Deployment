@@ -4,9 +4,75 @@
     <title>results page</title>
 </head>
 <body>
-    <h2>Hello {{current_user.name}}</h2>
+    <h2>Hello {{user.name}}!</h2>
  
-  
+    <div class="container">
+            <h4>Your Upcoming Trips </h4>
+            <table>
+                <thead>
+                    <th>Desination</th>
+                    <th>Travel Start Date</th>
+                    <th>Travel End Date</th>
+                    <th>Plan</th>
+                </thead>
+                <tbody>
+                    {%if travels%}
+                        {%for travel in travels%}
+                            {%if travel.creator.id == user.id%}
+                    <tr>
+                        <td><a href="/success/{{travel.id}}">{{travel.destination}}</a></td>
+                        <td>{{travel.start}}</td>
+                        <td>{{travel.end}}</td>
+                        <td>{{travel.description}}</td>
+                    </tr>
+                            {%endif%}
+                            {%for everyuser in travel.join.all%}
+                                {%if everyuser.id == user.id%}
+                    <tr>
+                        <td><a href="/success/{{travel.id}}">{{travel.destination}}</a></td>
+                        <td>{{travel.start}}</td>
+                        <td>{{travel.end}}</td>
+                        <td>{{travel.description}}</td>
+                    </tr>
+                                {%endif%}
+                            {%endfor%}
+                        {%endfor%}
+                    {%endif%}
+                </tbody>
+            </table>
+        </div>
+    <div class="container">
+        <h4>Other User's Travel Plans</h4>
+            <table>
+                <thead>
+                    <th>Name</th>
+                    <th>Destination</th>
+                    <th>Travel Start Date</th>
+                    <th>Travel End Date</th>
+                    <th>Do You Want to Join?</th>
+                    </thead>
+                    <tbody>
+                        {%if travels%}
+                            {%for travel in others%}
+                        <tr>
+                            <td>{{travel.creator.name}}</td>
+                            <td><a href="/success/{{travel.id}}">{{travel.destination}}</a></td>
+                            <td>{{travel.start}}</td>
+                            <td>{{travel.end}}</td>
+        
+                                {%if user !=  travel.creator%}
+            <form class="" action="/join/{{travel.id}}" method="POST">
+                        {% csrf_token %}
+                <td><input type="Submit" name="join" value="Join"></td>
+                    </form>
+                        {%endif%}
+                        </tr>
+                            {%endfor%}
+                        {%endif%}
+                    </tbody>
+                </table>
+                <br>
+                <h5 style="text-align: right"><a href="/addplan">Add Travel Plan</a></h5>
      
  <form action='/logout'>
     {% csrf_token %}

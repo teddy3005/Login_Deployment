@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Quotes</title>
-    <!-- {% load staticfiles %}
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-    <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon"/>
-    <meta charset="UTF-8"> -->
-</head>
-<body>
-    <div class='container'>
-        
-            <div id='dash' class='col-sm-1 col-sm-offset-9'>
-                <h5><a href='/products'>Home</a></h5>
+    <head>
+        <meta charset="utf-8">
+        <title>hidden plan</title>
+       
+    </head>
+    <body>
+        <h5 style="text-align: right"><a href="/logout" style="margin: 20px">Log out</a> | <a href="/travel" style="margin: 20px">Home</a></h5>
+        <h5 class="container">Hello, {{user.name}} </h5>
+        <div class="container row">
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                <li style="color:red">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="row">
+                <form action="/createplan"  method="POST">
+                    <div class="">
+                    {% csrf_token %}
+                    <!-- <label for="textarea1"></label> -->
+                    <textarea name="destination"></textarea> 
+                    <!-- <label for="textarea2">Description</label> -->
+                    <textarea name="description" ></textarea>
+                    <label for="textarea3">Travel Date From</label>
+                    <input name="start" id="textarea3" type="date" >
+                    <label for="textare4">Travel Date To</label>
+                    <input name="end" id="textare4" type="date" >
+                    <button type="submit" class="btn">Add</button>
+                    </div>
+                </form>
             </div>
-            <div class='col-sm-1'>
-                <h5><a href='/logout'>Logout</a></h5>
-            </div>
-       
-       
-        <h4>Name: {{user.name}}</h4>
-       
-    </div>
-</body>
+        </div>
+    </body>
 </html>
 
