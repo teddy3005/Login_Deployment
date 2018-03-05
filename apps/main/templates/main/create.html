@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>hidden plan</title>
-       
-    </head>
-    <body>
-        <h5 style="text-align: right"><a href="/logout" style="margin: 20px">Log out</a> | <a href="/travel" style="margin: 20px">Home</a></h5>
-        <h5 class="container">Hello, {{user.name}} </h5>
-        <div class="container row">
-            {% if messages %}
-                <ul>
-                {% for message in messages %}
-                <li style="color:red">{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <div class="row">
-                <form action="/createplan"  method="POST">
-                    <div class="">
-                    {% csrf_token %}
-                    <!-- <label for="textarea1"></label> -->
-                    <textarea name="destination"></textarea> 
-                    <!-- <label for="textarea2">Description</label> -->
-                    <textarea name="description" ></textarea>
-                    <label for="textarea3">Travel Date From</label>
-                    <input name="start" id="textarea3" type="date" >
-                    <label for="textare4">Travel Date To</label>
-                    <input name="end" id="textare4" type="date" >
-                    <button type="submit" class="btn">Add</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </body>
+<html lang="en">
+<head>
+    <title>create appointment</title>
+</head>
+<body>
+    <a href="/show">Home</a> | <a href="/logout">Logout</a>
+    <br><br><br>
+    <form action="/update/{{app.id}}" method="POST"> 
+        {% csrf_token %}
+        <label>Tasks: <input type="text" name="task" value="{{app.task}}"></label>
+        <label>Status: <select name="status" value="status">
+            <option value="Done">Done</option>
+            <option value="Pending">Pending</option>
+            <option value="Missed">Missed</option>
+        </select></label>
+        <label>
+            <input type="text" name="date" id="datepicker" value="{{app.date}}">
+        </label>
+        <label>Time:
+            <select name="time" value="{{app.date}}">
+                <option value="08:00">8:00AM</option>
+                <option value="11:00">11:00PM</option>
+                <option value="16:00">2:00PM</option>
+                <option value="18:00">4:00PM</option>
+            </select>
+        </label>
+        <input type="submit" value="Update">
+    </form><br>
+    {% for message in messages %}
+    <li class="red">{{ message }}</li>
+    <br> {% endfor %}
+</body>
 </html>
-

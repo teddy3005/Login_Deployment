@@ -33,29 +33,15 @@ class UserManager(models.Manager):
        
 
 
-class travelManager(models.Manager):
-    def travelval(self,postData):
-        errors=[]
-        if len(postData['destination'])==0:
-            errors.append('Destination field cannot be blank')
-        if len(postData['description'])==0:
-            errors.append('Description field cannot be blank')
-        if str(date.today())>str(postData['start']):
-            errors.append('Input valid date')
-        if str(date.today())>postData['end']:
-            errors.append('Invalid date')
-        if postData['start']> postData['end']:
-            errors.append('Invalid date')
-        if len(errors)==0:
-            
-            return (True)
-        else:
-            print 'unable to enter data'
-            return (False, errors)
-            
-           
-
-   
+               
+class AppointmentManager(models.Manager):
+    def appointment_val(self,postData):
+        errors={}
+        if postData['task']==0:
+            errors.append('Field cannot be empty')
+        if postData['date']==0:
+            errors.append('Please select a valid date')
+        return errors
    
 
 
@@ -69,13 +55,15 @@ class User(models.Model):
 
 
 
-class Travel(models.Model):
-    destination = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
-    start= models.DateField()
-    end= models.DateField()
-    creator= models.ForeignKey(User, related_name= "planner")
-    join= models.ManyToManyField(User, related_name="joiner") 
+class Appointment(models.Model):
+    task = models.CharField(max_length=255)
+    time = models.CharField(max_length=255)
+    status = models.CharField(max_length=255)
+    date = models.DateField(blank=False)
+    user = models.ForeignKey(User, related_name="appointment")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    objects = travelManager()
+    objects = AppointmentManager()
+
+    def is_today(self):
+        return {'date':datetime.now()}

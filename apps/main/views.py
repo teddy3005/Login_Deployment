@@ -3,6 +3,8 @@ from django.contrib import messages
 from .models import *
 import bcrypt
 import json
+import operator
+from datetime import datetime 
 
 
 def index(request):
@@ -24,9 +26,6 @@ def login(request):
         else:
             messages.error(request,'Email and password provided did not match')
             return redirect ('/')
-
-
-
 
 
 def createUser(request):
@@ -53,76 +52,63 @@ def createUser(request):
             return redirect('/show')
     
 
-
-
-
-def view_result(request):
+def dashboard(request):
     if 'user' in request.session:
-        context = {
-        'user':request.session['user'],
-        "travels" : Travel.objects.all(),
-        "others": Travel.objects.all().exclude(join__id=request.session['user'].id)
-       }
-   
-        return render(request, 'main/show.html', context)
-    else:
-        return  redirect ('/')
-
-def addplan(request):
-    if 'user' not in request.session:
-        return redirect ("/")
-    else:
-        print request.session['user'].id
-        context= {
-            "user":User.objects.get(id=request.session['user'].id),
+        today=datetime.now().strftime("%Y-%m-%d")
+        user= User.objects.get(id=request.session['user'].id)
+        context={
+            'user':request.session['user'],
+            'today':Appointment.objects.order_by('time').filter(date=today, user=user),
+            'later':Appointment.objects.order_by('time').filter(user=user).exclude(date=today)
         }
-        return render(request, 'main/create.html', context)
-
-def createplan(request):
-    if request.method != 'POST':
-        return redirect ("/addplan")
-    newplan= Travel.objects.travelval(request.POST, request.session["user"].id)
-    if newplan[0] == True:
-        return redirect('/show')
+        return render(request, 'main/show.html',context, today)
     else:
-        for message in newplan[1]:
-            messages.error(request, message)
-        return redirect('/addplan')
+        return redirect ('/')
 
-
-def join(request, travel_id):
-    if request.method == "GET":
-        messages.error(request,"invalid")
+def edit(request):
+    if 'user' not in request.session:
         return redirect('/')
-    joiner= Travel.objects.join(request.session["id"], travel_id)
-    
-    if 'errors' in joiner:
-        messages.error(request, joiner['errors'])
+    else:
+        user=User.objects.get(id=request.session['user'])
+    return render(request, 'main/create.html')
+
+def update(request,id):
+    errors=Appointment.objects.appointment_val(request.POST)
+    if "exist" in errors:
+        for tag, error in errors.iteritems():
+            messages.errors(request, error, extra_tags=tag)
+        return redirect("main/show")
+    else:
+        app =Appointment.objects.get(id=id)
+        app.task=request.POST['task']
+        app.date=request.POST['date']
+        app.time=request.POST['time']
+        app.status=request.POST['status']
+        app.save()
+        return redirect('/show'.format(id))
+
+def add(request):
+    errors=Appointment.objects.appointment_val(request.POST)
+    if "exist" in errors:
+        for tag, error in errors.iteritems():
+            messages.errors(request, error, extra_tags=tag)
+            return redirect("/show")
+    else:
+        user=User.objects.get(id=request.session['user'].id)
+        app= Appointment.objects.create(
+            task=request.POST['task'],
+            status="done",
+            time=request.POST['time'],
+            date=request.POST['date'],
+            user=user,
+        )
+        return render(request, 'main/create.html')
+
+
+
+def destroy(request, id):
+    Appointment.objects.get(id=id).delete()
     return redirect('/show')
-
-
-def show(request, travel_id):
-    try:
-        travel= Travel.objects.get(id=travel_id)
-    except Travel.DoesNotExist:
-        messages.info(request,"Travel Not Found")
-        return redirect('/show')
-    context={
-        "travel": travel,
-        "user":User.objects.get(id=request.session['id']),
-        "others": User.objects.filter(joiner__id=travel.id).exclude(id=travel.creator.id),
-    }
-    return render(request, 'main/success.html', context)
-
-def delete(request, id):
-    try:
-        target= Travel.objects.get(id=id)
-    except Travel.DoesNotExist:
-        messages.info(request,"Message Not Found")
-        return redirect('/show')
-    target.delete()
-    return redirect('/show')
-
 
 def logout(request):
     request.session.clear()

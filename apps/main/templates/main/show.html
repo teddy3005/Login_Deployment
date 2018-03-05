@@ -5,74 +5,75 @@
 </head>
 <body>
     <h2>Hello {{user.name}}!</h2>
- 
-    <div class="container">
-            <h4>Your Upcoming Trips </h4>
-            <table>
-                <thead>
-                    <th>Desination</th>
-                    <th>Travel Start Date</th>
-                    <th>Travel End Date</th>
-                    <th>Plan</th>
-                </thead>
-                <tbody>
-                    {%if travels%}
-                        {%for travel in travels%}
-                            {%if travel.creator.id == user.id%}
-                    <tr>
-                        <td><a href="/success/{{travel.id}}">{{travel.destination}}</a></td>
-                        <td>{{travel.start}}</td>
-                        <td>{{travel.end}}</td>
-                        <td>{{travel.description}}</td>
-                    </tr>
-                            {%endif%}
-                            {%for everyuser in travel.join.all%}
-                                {%if everyuser.id == user.id%}
-                    <tr>
-                        <td><a href="/success/{{travel.id}}">{{travel.destination}}</a></td>
-                        <td>{{travel.start}}</td>
-                        <td>{{travel.end}}</td>
-                        <td>{{travel.description}}</td>
-                    </tr>
-                                {%endif%}
-                            {%endfor%}
-                        {%endfor%}
-                    {%endif%}
-                </tbody>
-            </table>
-        </div>
-    <div class="container">
-        <h4>Other User's Travel Plans</h4>
-            <table>
-                <thead>
-                    <th>Name</th>
-                    <th>Destination</th>
-                    <th>Travel Start Date</th>
-                    <th>Travel End Date</th>
-                    <th>Do You Want to Join?</th>
-                    </thead>
-                    <tbody>
-                        {%if travels%}
-                            {%for travel in others%}
-                        <tr>
-                            <td>{{travel.creator.name}}</td>
-                            <td><a href="/success/{{travel.id}}">{{travel.destination}}</a></td>
-                            <td>{{travel.start}}</td>
-                            <td>{{travel.end}}</td>
+    {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+        {% endif %}
+    <div class="container"> 
+        <h3>Here are your appintments for today, {% now "jS F Y" %}:</h3>
+        <table> 
+        <thead>
+            <tr>
+                <th>Tasks</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        {% if not i.is_today %}
+        {% for i in today %}
+        <tbody>
+            <tr>
+                <td>{{i.task}}</td>
+                <td>{{i.time}}</td>
+                <td>{{i.status}}</td>
+                <td><a href="/main/{{i.id}}">Edit</a> <a href="main/destroy/{{i.id}}"> Delete</a></td>
+             </tr>
+        </tbody>
+        {% endfor %}
+        {% endif %}}
+        </table>
+
+        <h3>Your Other Appointments:</h3>
+        <table id="table">
+            <thead>
+                <tr>
+                    <th>Tasks</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in later %}
+                <tr>
+                    <td>{{i.task}}</td>
+                    <td>{{i.date}}</td>
+                    <td>{{i.time}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Add Appintment</h3>
+       
         
-                                {%if user !=  travel.creator%}
-            <form class="" action="/join/{{travel.id}}" method="POST">
-                        {% csrf_token %}
-                <td><input type="Submit" name="join" value="Join"></td>
-                    </form>
-                        {%endif%}
-                        </tr>
-                            {%endfor%}
-                        {%endif%}
-                    </tbody>
-                </table>
-                <br>
-                <h5 style="text-align: right"><a href="/addplan">Add Travel Plan</a></h5>
+        <form action="/add" method="POST">
+            {% csrf_token %}
+            <label> Date: <input type="text" name="date" value=""></label>
+            <label>Time:
+                    <select name="time">
+                            <option value="08:00">8:00AM</option>
+                            <option value="11:00">11:00PM</option>
+                            <option value="16:00">2:00PM</option>
+                            <option value="18:00">4:00PM</option>
+                    </select></label>
+            <label> Task: <input type="text" name="task"></label>
+            <input type="submit" value="Add">
+        </form>
+    </div>
+            
      
  <form action='/logout'>
     {% csrf_token %}
