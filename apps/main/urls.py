@@ -13,9 +13,4 @@ urlpatterns = [
     url(r'^edit$', views.edit),
     url(r'^create(?P<id>\d+)$', views.edit),
     url(r'^update/(?P<id>\d+)$', views.update),
-    
-    
-  
-    
-    
-]
+    ]
